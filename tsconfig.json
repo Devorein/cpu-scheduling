@@ -30,6 +30,7 @@
     "incremental": false,
     "types": [
       "node",
+      "jest"
     ]
   },
   "exclude": [
