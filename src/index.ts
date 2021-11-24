@@ -3,6 +3,7 @@ import { JSDOM } from 'jsdom';
 import { generateGantt } from './generateGantt';
 import { generateTable } from './generateTable';
 import { IProcessInfo, ProcessInfoInput } from './types';
+import { createElement } from './utils';
 
 export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>) {
 	const processInfos: IProcessInfo[] = [];
@@ -101,15 +102,8 @@ export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>,
 		const aggregateInfoContainerElement = window.document.createElement('div');
 		aggregateInfoContainerElement.classList.add('aggregate_info-container');
 
-		const aggregateInfoLabelElement = window.document.createElement('p');
-		aggregateInfoLabelElement.textContent = label;
-		aggregateInfoContainerElement.appendChild(aggregateInfoLabelElement);
-		aggregateInfoLabelElement.classList.add('aggregate_info-label');
-
-		const aggregateInfoValueElement = window.document.createElement('p');
-		aggregateInfoValueElement.textContent = value;
-		aggregateInfoContainerElement.appendChild(aggregateInfoValueElement);
-		aggregateInfoValueElement.classList.add('aggregate_info-value');
+		createElement(window, 'p', ['aggregate_info-label'], label, aggregateInfoContainerElement);
+		createElement(window, 'p', ['aggregate_info-value'], value, aggregateInfoContainerElement);
 
 		window.document.body.appendChild(aggregateInfoContainerElement);
 	});

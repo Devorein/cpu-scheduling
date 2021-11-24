@@ -1,13 +1,13 @@
 import { DOMWindow } from 'jsdom';
+import { createElement } from './utils';
 
-export function generateGantt(
-	window: DOMWindow,
-	items: {
-		label: string;
-		start: number;
-		finish: number;
-	}[]
-) {
+interface Item {
+	label: string;
+	start: number;
+	finish: number;
+}
+
+export function generateGantt(window: DOMWindow, items: Item[]) {
 	const totalTime = items[items.length - 1].finish;
 	const styleElement = window.document.createElement('style');
 	styleElement.textContent = `
@@ -21,9 +21,8 @@ export function generateGantt(
   }
 
   .gantt_chart-chunk-label {
-    padding: 5px;
+    padding: 10px;
     font-weight: bold;
-    border: 2px solid #aaa;
     border-radius: 2px;
     background: #eee;
   }
@@ -34,38 +33,46 @@ export function generateGantt(
     font-weight: 500;
   }
   `;
-	const ganttChartContainerElement = window.document.createElement('div');
-	ganttChartContainerElement.classList.add('gantt_chart-container');
+	const ganttChartContainerElement = createElement(window, 'div', ['gantt_chart-container']);
 
-	items.forEach((item) => {
+	items.forEach((item, index) => {
+		let previous: Item | null = null;
+		if (index !== 0) {
+			previous = items[index - 1];
+		}
+
 		const { label, start, finish } = item;
 		const widthPercentage = ((finish - start) / totalTime) * 100;
-		const ganttChartChunkElement = window.document.createElement('div');
-		ganttChartChunkElement.classList.add('gantt_chart-chunk');
+
+		const ganttChartChunkElement = createElement(window, 'div', ['gantt_chart-chunk']);
 		ganttChartChunkElement.style.width = `${widthPercentage}%`;
-		const ganttChartChunkLabelElement = window.document.createElement('div');
-		ganttChartChunkLabelElement.textContent = label;
-		ganttChartChunkLabelElement.classList.add('gantt_chart-chunk-label');
 
-		const ganttChartChunkTimeContainerElement = window.document.createElement('div');
-		ganttChartChunkTimeContainerElement.classList.add(`gantt_chart-chunk-time`);
-
-		const ganttChartChunkStartTimeContainerElement = window.document.createElement('span');
-		ganttChartChunkStartTimeContainerElement.classList.add(
-			`gantt_chart-chunk-time_start`,
-			`gantt_chart-chunk-time`
+		const ganttChartChunkLabelElement = createElement(
+			window,
+			'div',
+			['gantt_chart-chunk-label'],
+			label
 		);
-		ganttChartChunkStartTimeContainerElement.textContent = start.toString();
 
-		const ganttChartChunkEndTimeContainerElement = window.document.createElement('span');
-		ganttChartChunkEndTimeContainerElement.classList.add(
-			`gantt_chart-chunk-time_end`,
-			`gantt_chart-chunk-time`
+		const ganttChartChunkTimeContainerElement = createElement(window, 'div', [
+			`gantt_chart-chunk-time`,
+		]);
+
+		createElement(
+			window,
+			'span',
+			[`gantt_chart-chunk-time_start`, `gantt_chart-chunk-time`],
+			previous && previous.finish === start ? '' : start.toString(),
+			ganttChartChunkTimeContainerElement
 		);
-		ganttChartChunkEndTimeContainerElement.textContent = finish.toString();
 
-		ganttChartChunkTimeContainerElement.appendChild(ganttChartChunkStartTimeContainerElement);
-		ganttChartChunkTimeContainerElement.appendChild(ganttChartChunkEndTimeContainerElement);
+		createElement(
+			window,
+			'span',
+			[`gantt_chart-chunk-time_end`, `gantt_chart-chunk-time`],
+			finish.toString(),
+			ganttChartChunkTimeContainerElement
+		);
 
 		ganttChartChunkElement.appendChild(ganttChartChunkTimeContainerElement);
 		ganttChartChunkElement.appendChild(ganttChartChunkLabelElement);

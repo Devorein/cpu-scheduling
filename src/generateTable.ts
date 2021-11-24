@@ -1,4 +1,5 @@
 import { DOMWindow } from 'jsdom';
+import { createElement } from './utils';
 
 export function generateTable<D extends Record<string, any>>(
 	window: DOMWindow,
@@ -13,17 +14,13 @@ export function generateTable<D extends Record<string, any>>(
 	const tableBodyElement = document.createElement('tbody');
 
 	cols.forEach((col) => {
-		const tableHeadCellElement = document.createElement('th');
-		tableHeadCellElement.textContent = col[1].toString();
-		tableHeadRowElement.appendChild(tableHeadCellElement);
+		createElement(window, 'th', [], col[1].toString(), tableHeadRowElement);
 	});
 
 	rows.forEach((row) => {
 		const tableBodyRowElement = document.createElement('tr');
 		cols.forEach((col) => {
-			const tableBodyCellElement = document.createElement('td');
-			tableBodyCellElement.textContent = row[col[0]].toString();
-			tableBodyRowElement.appendChild(tableBodyCellElement);
+			createElement(window, 'td', [], row[col[0]].toString(), tableBodyRowElement);
 		});
 
 		tableBodyElement.appendChild(tableBodyRowElement);
