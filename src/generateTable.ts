@@ -1,15 +1,11 @@
-import fs from 'fs';
-import { DOMWindow, JSDOM } from 'jsdom';
+import { DOMWindow } from 'jsdom';
 
 export function generateTable<D extends Record<string, any>>(
+	window: DOMWindow,
 	rows: D[],
-	cols: [keyof D, string][],
-	filePath: string,
-	// eslint-disable-next-line
-	cb?: (window: DOMWindow) => any
+	cols: [keyof D, string][]
 ) {
-	const dom = new JSDOM();
-	const { document } = dom.window;
+	const { document } = window;
 
 	const tableElement = document.createElement('table');
 	const tableHeadElement = document.createElement('thead');
@@ -50,15 +46,6 @@ export function generateTable<D extends Record<string, any>>(
   body {
     font-family: Helvetica;
   }
-
-  .aggregate_info-container {
-    display: flex;
-  }
-
-  .aggregate_info-value {
-    font-weight: bold;
-    margin-left: 10px;
-  }
   `;
 
 	tableHeadElement.appendChild(tableHeadRowElement);
@@ -66,10 +53,4 @@ export function generateTable<D extends Record<string, any>>(
 	tableElement.appendChild(tableBodyElement);
 	document.body.appendChild(tableElement);
 	document.head.appendChild(styleElement);
-
-	if (cb) {
-		cb(dom.window);
-	}
-
-	fs.writeFileSync(filePath, document.getElementsByTagName('html')[0].innerHTML, 'utf-8');
 }

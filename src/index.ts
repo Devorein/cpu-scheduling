@@ -1,3 +1,5 @@
+import fs from 'fs';
+import { JSDOM } from 'jsdom';
 import { generateTable } from './generateTable';
 import { IProcessInfo, ProcessInfoInput } from './types';
 
@@ -60,6 +62,9 @@ export function firstComeFirstServed(processInfosInput: Array<ProcessInfoInput>)
 }
 
 export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>, filePath: string) {
+	const jsdom = new JSDOM();
+	const { window } = jsdom;
+
 	const { averageTurnaroundTime, averageWaitTime, info, totalTurnaroundTime, totalWaitTime } =
 		firstComeFirstServed(processInfosInput);
 	const labels: [keyof IProcessInfo, string][] = [
@@ -72,29 +77,43 @@ export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>,
 		['waitTime', 'wait time'],
 	];
 
-	return generateTable(info, labels, filePath, (window) => {
-		[
-			['Total turnaround time', totalTurnaroundTime.toString()],
-			['Total wait time', totalWaitTime.toString()],
-			['Average turnaround time', averageTurnaroundTime.toString()],
-			['Average wait time', averageWaitTime.toString()],
-		].forEach(([label, value]) => {
-			const aggregateInfoContainerElement = window.document.createElement('div');
-			aggregateInfoContainerElement.classList.add('aggregate_info-container');
+	generateTable(jsdom.window, info, labels);
 
-			const aggregateInfoLabelElement = window.document.createElement('p');
-			aggregateInfoLabelElement.textContent = label;
-			aggregateInfoContainerElement.appendChild(aggregateInfoLabelElement);
-			aggregateInfoLabelElement.classList.add('aggregate_info-label');
+	const styleElement = window.document.createElement('style');
+	styleElement.textContent = `
+  .aggregate_info-container {
+    display: flex;
+  }
 
-			const aggregateInfoValueElement = window.document.createElement('p');
-			aggregateInfoValueElement.textContent = value;
-			aggregateInfoContainerElement.appendChild(aggregateInfoValueElement);
-			aggregateInfoValueElement.classList.add('aggregate_info-value');
+  .aggregate_info-value {
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  `;
 
-			window.document.body.appendChild(aggregateInfoContainerElement);
-		});
+	[
+		['Total turnaround time', totalTurnaroundTime.toString()],
+		['Total wait time', totalWaitTime.toString()],
+		['Average turnaround time', averageTurnaroundTime.toString()],
+		['Average wait time', averageWaitTime.toString()],
+	].forEach(([label, value]) => {
+		const aggregateInfoContainerElement = window.document.createElement('div');
+		aggregateInfoContainerElement.classList.add('aggregate_info-container');
+
+		const aggregateInfoLabelElement = window.document.createElement('p');
+		aggregateInfoLabelElement.textContent = label;
+		aggregateInfoContainerElement.appendChild(aggregateInfoLabelElement);
+		aggregateInfoLabelElement.classList.add('aggregate_info-label');
+
+		const aggregateInfoValueElement = window.document.createElement('p');
+		aggregateInfoValueElement.textContent = value;
+		aggregateInfoContainerElement.appendChild(aggregateInfoValueElement);
+		aggregateInfoValueElement.classList.add('aggregate_info-value');
+
+		window.document.body.appendChild(aggregateInfoContainerElement);
 	});
+	window.document.head.appendChild(styleElement);
+	fs.writeFileSync(filePath, window.document.getElementsByTagName('html')[0].innerHTML, 'utf-8');
 }
 
 export * from './generateTable';
