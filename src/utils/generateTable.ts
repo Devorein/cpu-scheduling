@@ -28,6 +28,10 @@ export function generateTable<D extends Record<string, any>>(
 
 	const styleElement = document.createElement('style');
 	styleElement.textContent = `
+  table {
+    width: 100%;
+  }
+  
   th {
     padding: 10px;
     background: #ddd;

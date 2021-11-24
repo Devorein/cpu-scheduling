@@ -30,7 +30,12 @@ export function generateGantt(window: DOMWindow, items: Item[]) {
   .gantt_chart-chunk-time {
     display: flex;
     justify-content: space-between;
-    font-weight: 500;
+  }
+
+  .gantt_chart-chunk-time_end, .gantt_chart-chunk-time_start--not_empty {
+    padding: 3px;
+    background-color: #ddd;
+    margin-bottom: 3px;
   }
   `;
 	const ganttChartContainerElement = createElement(window, 'div', ['gantt_chart-container']);
@@ -58,18 +63,23 @@ export function generateGantt(window: DOMWindow, items: Item[]) {
 			`gantt_chart-chunk-time`,
 		]);
 
+		const isEmpty = previous && previous.finish === start;
+
 		createElement(
 			window,
 			'span',
-			[`gantt_chart-chunk-time_start`, `gantt_chart-chunk-time`],
-			previous && previous.finish === start ? '' : start.toString(),
+			[
+				`gantt_chart-chunk-time_start`,
+				isEmpty ? 'gantt_chart-chunk-time_start--empty' : `gantt_chart-chunk-time_start--not_empty`,
+			],
+			isEmpty ? '' : start.toString(),
 			ganttChartChunkTimeContainerElement
 		);
 
 		createElement(
 			window,
 			'span',
-			[`gantt_chart-chunk-time_end`, `gantt_chart-chunk-time`],
+			[`gantt_chart-chunk-time_end`],
 			finish.toString(),
 			ganttChartChunkTimeContainerElement
 		);
