@@ -3,7 +3,8 @@
     "target": "ES2018",
     "module": "commonjs",
     "lib": [
-      "esnext"
+      "esnext",
+      "DOM"
     ],
     "strict": false,
     "skipLibCheck": true,
