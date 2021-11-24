@@ -2,7 +2,7 @@ import fs from 'fs';
 import { JSDOM } from 'jsdom';
 import { IAlgorithmResult, IProcessInfo } from '../types';
 import { generateGantt } from './generateGantt';
-import { generateSchedulingAggregation } from './generateSchedulingAggregation';
+import { generateList } from './generateList';
 import { generateTable } from './generateTable';
 
 export function generateDiagram(algorithmResult: IAlgorithmResult, filePath: string) {
@@ -21,7 +21,12 @@ export function generateDiagram(algorithmResult: IAlgorithmResult, filePath: str
 
 	generateTable(jsdom.window, algorithmResult.infos, labels);
 
-	generateSchedulingAggregation(window, algorithmResult);
+	generateList(window, [
+		['Total turnaround time', algorithmResult.totalTurnaroundTime.toString()],
+		['Total wait time', algorithmResult.totalWaitTime.toString()],
+		['Average turnaround time', algorithmResult.averageTurnaroundTime.toString()],
+		['Average wait time', algorithmResult.averageWaitTime.toString()],
+	]);
 
 	generateGantt(
 		window,
