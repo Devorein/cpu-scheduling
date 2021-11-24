@@ -1,5 +1,5 @@
 import { DOMWindow } from 'jsdom';
-import { createElement } from './utils';
+import { createElement } from './createElement';
 
 export function generateTable<D extends Record<string, any>>(
 	window: DOMWindow,
