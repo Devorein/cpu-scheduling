@@ -60,18 +60,41 @@ export function firstComeFirstServed(processInfosInput: Array<ProcessInfoInput>)
 }
 
 export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>, filePath: string) {
-	const firstComeFirstServedResult = firstComeFirstServed(processInfosInput);
-	const labels: (keyof IProcessInfo)[] = [
-		'pid',
-		'arrivalTime',
-		'burstTime',
-		'startTime',
-		'finishTime',
-		'turnaroundTime',
-		'waitTime',
+	const { averageTurnaroundTime, averageWaitTime, info, totalTurnaroundTime, totalWaitTime } =
+		firstComeFirstServed(processInfosInput);
+	const labels: [keyof IProcessInfo, string][] = [
+		['pid', 'pid'],
+		['arrivalTime', 'arrival time'],
+		['burstTime', 'burst time'],
+		['startTime', 'start time'],
+		['finishTime', 'finish time'],
+		['turnaroundTime', 'turnaround time'],
+		['waitTime', 'wait time'],
 	];
 
-	return generateTable(firstComeFirstServedResult.info, labels, filePath);
+	return generateTable(info, labels, filePath, (window) => {
+		[
+			['Total turnaround time', totalTurnaroundTime.toString()],
+			['Total wait time', totalWaitTime.toString()],
+			['Average turnaround time', averageTurnaroundTime.toString()],
+			['Average wait time', averageWaitTime.toString()],
+		].forEach(([label, value]) => {
+			const aggregateInfoContainerElement = window.document.createElement('div');
+			aggregateInfoContainerElement.classList.add('aggregate_info-container');
+
+			const aggregateInfoLabelElement = window.document.createElement('p');
+			aggregateInfoLabelElement.textContent = label;
+			aggregateInfoContainerElement.appendChild(aggregateInfoLabelElement);
+			aggregateInfoLabelElement.classList.add('aggregate_info-label');
+
+			const aggregateInfoValueElement = window.document.createElement('p');
+			aggregateInfoValueElement.textContent = value;
+			aggregateInfoContainerElement.appendChild(aggregateInfoValueElement);
+			aggregateInfoValueElement.classList.add('aggregate_info-value');
+
+			window.document.body.appendChild(aggregateInfoContainerElement);
+		});
+	});
 }
 
 export * from './generateTable';

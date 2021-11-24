@@ -1,10 +1,12 @@
 import fs from 'fs';
-import { JSDOM } from 'jsdom';
+import { DOMWindow, JSDOM } from 'jsdom';
 
 export function generateTable<D extends Record<string, any>>(
 	rows: D[],
-	cols: (keyof D)[],
-	filePath: string
+	cols: [keyof D, string][],
+	filePath: string,
+	// eslint-disable-next-line
+	cb?: (window: DOMWindow) => any
 ) {
 	const dom = new JSDOM();
 	const { document } = dom.window;
@@ -16,7 +18,7 @@ export function generateTable<D extends Record<string, any>>(
 
 	cols.forEach((col) => {
 		const tableHeadCellElement = document.createElement('th');
-		tableHeadCellElement.textContent = col.toString();
+		tableHeadCellElement.textContent = col[1].toString();
 		tableHeadRowElement.appendChild(tableHeadCellElement);
 	});
 
@@ -24,7 +26,7 @@ export function generateTable<D extends Record<string, any>>(
 		const tableBodyRowElement = document.createElement('tr');
 		cols.forEach((col) => {
 			const tableBodyCellElement = document.createElement('td');
-			tableBodyCellElement.textContent = row[col].toString();
+			tableBodyCellElement.textContent = row[col[0]].toString();
 			tableBodyRowElement.appendChild(tableBodyCellElement);
 		});
 
@@ -34,7 +36,7 @@ export function generateTable<D extends Record<string, any>>(
 	const styleElement = document.createElement('style');
 	styleElement.textContent = `
   th {
-    padding: 5px;
+    padding: 10px;
     background: #ddd;
     text-transform: capitalize;
   }
@@ -44,6 +46,19 @@ export function generateTable<D extends Record<string, any>>(
     text-align: center;
     background: #eee;
   }
+
+  body {
+    font-family: Helvetica;
+  }
+
+  .aggregate_info-container {
+    display: flex;
+  }
+
+  .aggregate_info-value {
+    font-weight: bold;
+    margin-left: 10px;
+  }
   `;
 
 	tableHeadElement.appendChild(tableHeadRowElement);
@@ -51,6 +66,10 @@ export function generateTable<D extends Record<string, any>>(
 	tableElement.appendChild(tableBodyElement);
 	document.body.appendChild(tableElement);
 	document.head.appendChild(styleElement);
+
+	if (cb) {
+		cb(dom.window);
+	}
 
 	fs.writeFileSync(filePath, document.getElementsByTagName('html')[0].innerHTML, 'utf-8');
 }
