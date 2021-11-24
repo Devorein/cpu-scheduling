@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { JSDOM } from 'jsdom';
+import { generateGantt } from './generateGantt';
 import { generateTable } from './generateTable';
 import { IProcessInfo, ProcessInfoInput } from './types';
 
@@ -41,7 +42,7 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>) {
 	});
 
 	return {
-		info: processInfos,
+		infos: processInfos,
 		totalWaitTime,
 		totalTurnaroundTime,
 		averageWaitTime: totalWaitTime / processInfos.length,
@@ -65,7 +66,7 @@ export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>,
 	const jsdom = new JSDOM();
 	const { window } = jsdom;
 
-	const { averageTurnaroundTime, averageWaitTime, info, totalTurnaroundTime, totalWaitTime } =
+	const { averageTurnaroundTime, averageWaitTime, infos, totalTurnaroundTime, totalWaitTime } =
 		firstComeFirstServed(processInfosInput);
 	const labels: [keyof IProcessInfo, string][] = [
 		['pid', 'pid'],
@@ -77,7 +78,7 @@ export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>,
 		['waitTime', 'wait time'],
 	];
 
-	generateTable(jsdom.window, info, labels);
+	generateTable(jsdom.window, infos, labels);
 
 	const styleElement = window.document.createElement('style');
 	styleElement.textContent = `
@@ -113,6 +114,12 @@ export function generateTableForFCFS(processInfosInput: Array<ProcessInfoInput>,
 		window.document.body.appendChild(aggregateInfoContainerElement);
 	});
 	window.document.head.appendChild(styleElement);
+
+	generateGantt(
+		window,
+		infos.map((info) => ({ finish: info.finishTime, start: info.startTime, label: info.pid }))
+	);
+
 	fs.writeFileSync(filePath, window.document.getElementsByTagName('html')[0].innerHTML, 'utf-8');
 }
 
