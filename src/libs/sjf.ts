@@ -34,12 +34,16 @@ export function shortestJobFirst(processInfosInput: Array<ProcessInfoInput>) {
 	const processQueue: ProcessInfoInput[] = [firstProcess];
 
 	while (copiedProcessInfosInput.length !== 0) {
-		const previousProcess: ProcessInfoInput = processQueue[processQueue.length - 1];
-
 		const processesWithinPreviousBurstTime: [string, number, number, number][] = [];
-		// Filtering the processes whose arrival time is within the burst time of the last process in queue
+		// Filtering the processes whose arrival time is within the burst time all the processes in the queue
 		copiedProcessInfosInput.forEach((copiedProcessInfoInput, index) => {
-			if (copiedProcessInfoInput[1] <= previousProcess[2]) {
+			if (
+				copiedProcessInfoInput[1] <=
+				processQueue.reduce(
+					(currentBurstTime, currentProcessInfo) => currentBurstTime + currentProcessInfo[2],
+					0
+				)
+			) {
 				processesWithinPreviousBurstTime.push([...copiedProcessInfoInput, index]);
 			}
 		});
