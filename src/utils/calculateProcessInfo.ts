@@ -1,6 +1,6 @@
-import { IProcessInfo, ProcessInfoInput } from '../types';
+import { IAlgorithmResult, IProcessInfo, ProcessInfoInput } from '../types';
 
-export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>) {
+export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): IAlgorithmResult {
 	const processInfos: IProcessInfo[] = [];
 	let totalWaitTime = 0;
 	let totalTurnaroundTime = 0;

@@ -9,3 +9,11 @@ export interface IProcessInfo {
 }
 
 export type ProcessInfoInput = [string, number, number];
+
+export interface IAlgorithmResult {
+	infos: IProcessInfo[];
+	totalWaitTime: number;
+	totalTurnaroundTime: number;
+	averageWaitTime: number;
+	averageTurnaroundTime: number;
+}
