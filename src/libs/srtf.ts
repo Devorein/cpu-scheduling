@@ -41,8 +41,9 @@ export function shortestRemainingTimeFirst(processInfosInput: Array<ProcessInfoI
 		}
 
 		if (readyQueue.length !== 0) {
-			const [processSortedByBurstTime, processSortedByBurstTimeIndex] =
-				findProcessByBurstTime<[...ProcessInfoInput, number, number, number, number]>(readyQueue);
+			const [processSortedByBurstTime, processSortedByBurstTimeIndex] = findProcessByBurstTime<
+				[...ProcessInfoInput, number, number, number, number]
+			>(readyQueue, 3);
 			if (readyQueue[processSortedByBurstTimeIndex][6] === -1) {
 				readyQueue[processSortedByBurstTimeIndex][6] = currentTIme;
 			}

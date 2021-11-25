@@ -26,16 +26,19 @@ export function findProcessByArrivalTime(processInfosInput: Array<ProcessInfoInp
 }
 
 export function findProcessByBurstTime<P extends [...ProcessInfoInput, ...number[]]>(
-	processInfosInput: Array<P>
+	processInfosInput: Array<P>,
+	burstTimeIndex?: number
 ) {
 	let firstProcess: P = processInfosInput[0],
 		firstProcessIndex = 0;
 	for (let index = 1; index < processInfosInput.length; index += 1) {
 		// Comparing the burst time
-		if (processInfosInput[index][2] < firstProcess[2]) {
+		if (processInfosInput[index][burstTimeIndex ?? 2] < firstProcess[burstTimeIndex ?? 2]) {
 			firstProcess = processInfosInput[index];
 			firstProcessIndex = index;
-		} else if (processInfosInput[index][2] === firstProcess[2]) {
+		} else if (
+			processInfosInput[index][burstTimeIndex ?? 2] === firstProcess[burstTimeIndex ?? 2]
+		) {
 			// Comparing the process id
 			firstProcess =
 				processInfosInput[index][0] < firstProcess[0] ? processInfosInput[index] : firstProcess;
