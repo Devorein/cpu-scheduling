@@ -25,7 +25,7 @@ export function findProcessByArrivalTime(processInfosInput: Array<ProcessInfoInp
 	return [firstProcess, firstProcessIndex] as const;
 }
 
-export function findProcessByBurstTime<P extends [...ProcessInfoInput, number?, number?, number?]>(
+export function findProcessByBurstTime<P extends [...ProcessInfoInput, ...number[]]>(
 	processInfosInput: Array<P>
 ) {
 	let firstProcess: P = processInfosInput[0],
@@ -46,7 +46,7 @@ export function findProcessByBurstTime<P extends [...ProcessInfoInput, number?, 
 	return [firstProcess, firstProcessIndex] as const;
 }
 
-export function findProcessByPid<P extends [...ProcessInfoInput, number?, number?, number?]>(
+export function findProcessByPid<P extends [...ProcessInfoInput, ...number[]]>(
 	processes: Array<P>,
 	pid: string
 ) {

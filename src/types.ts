@@ -20,3 +20,9 @@ export interface IAlgorithmResult {
 	totalResponseTime: number;
 	averageResponseTime: number;
 }
+
+export interface GanttChartItem {
+	label: string;
+	start: number;
+	finish: number;
+}

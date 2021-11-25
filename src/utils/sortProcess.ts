@@ -1,6 +1,6 @@
 import { ProcessInfoInput } from '../types';
 
-export function sortProcesses(processes: Array<[...ProcessInfoInput, number, number, number]>) {
+export function sortProcesses<P extends [...ProcessInfoInput, ...number[]]>(processes: Array<P>) {
 	return processes.sort(
 		(
 			[process1Pid, process1ArrivalTime, process1BurstTime],
@@ -21,9 +21,9 @@ export function sortProcesses(processes: Array<[...ProcessInfoInput, number, num
 	);
 }
 
-export function sortProcessesByBurstTime<
-	P extends [...ProcessInfoInput, number?, number?, number?]
->(processes: Array<P>) {
+export function sortProcessesByBurstTime<P extends [...ProcessInfoInput, ...number[]]>(
+	processes: Array<P>
+) {
 	return processes.sort(
 		([process1Pid, , process1BurstTime], [process2Pid, , process2BurstTime]) => {
 			const burstTimeDifference = process1BurstTime - process2BurstTime;

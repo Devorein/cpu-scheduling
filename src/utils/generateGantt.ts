@@ -1,13 +1,8 @@
 import { DOMWindow } from 'jsdom';
+import { GanttChartItem } from '../types';
 import { createElement } from './createElement';
 
-interface Item {
-	label: string;
-	start: number;
-	finish: number;
-}
-
-export function generateGantt(window: DOMWindow, items: Item[]) {
+export function generateGantt(window: DOMWindow, items: GanttChartItem[]) {
 	const totalTime = items[items.length - 1].finish;
 	const styleElement = window.document.createElement('style');
 	styleElement.textContent = `
@@ -41,7 +36,7 @@ export function generateGantt(window: DOMWindow, items: Item[]) {
 	const ganttChartContainerElement = createElement(window, 'div', ['gantt_chart-container']);
 
 	items.forEach((item, index) => {
-		let previous: Item | null = null;
+		let previous: GanttChartItem | null = null;
 		if (index !== 0) {
 			previous = items[index - 1];
 		}
