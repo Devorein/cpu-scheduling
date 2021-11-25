@@ -6,6 +6,7 @@ export function shortestRemainingTimeFirst(processInfosInput: Array<ProcessInfoI
 	const sortedProcesses: [string, number, number, number, number, number][] = sortProcesses(
 		JSON.parse(JSON.stringify(processInfosInput))
 	);
+	// Add [remaining burst time, is complete, finish time] to all processes
 	sortedProcesses.forEach((sortedProcess) => {
 		sortedProcess.push(...[sortedProcess[2], 0, 0]);
 	});

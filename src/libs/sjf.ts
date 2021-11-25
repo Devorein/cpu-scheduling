@@ -1,5 +1,10 @@
 import { ProcessInfoInput } from '../types';
-import { calculateProcessInfo, findProcessByArrivalTime, generateDiagram } from '../utils';
+import {
+	calculateProcessInfo,
+	findProcessByArrivalTime,
+	findProcessByBurstTime,
+	generateDiagram,
+} from '../utils';
 
 export function shortestJobFirst(processInfosInput: Array<ProcessInfoInput>) {
 	const copiedProcessInfosInput: Array<ProcessInfoInput> = JSON.parse(
@@ -27,18 +32,9 @@ export function shortestJobFirst(processInfosInput: Array<ProcessInfoInput>) {
 			}
 		});
 
-		let nextProcess: [string, number, number, number] = processesWithinPreviousBurstTime[0];
-
-		for (let index = 1; index < processesWithinPreviousBurstTime.length; index += 1) {
-			if (processesWithinPreviousBurstTime[index][2] < nextProcess[2]) {
-				nextProcess = processesWithinPreviousBurstTime[index];
-			} else if (processesWithinPreviousBurstTime[index][2] === nextProcess[2]) {
-				if (processesWithinPreviousBurstTime[index][0] < nextProcess[0]) {
-					nextProcess = processesWithinPreviousBurstTime[index];
-				}
-			}
-		}
-
+		const [nextProcess] = findProcessByBurstTime<[string, number, number, number]>(
+			processesWithinPreviousBurstTime
+		);
 		copiedProcessInfosInput.splice(nextProcess[3], 1);
 		processQueue.push([nextProcess[0], nextProcess[1], nextProcess[2]]);
 	}
