@@ -15,6 +15,7 @@ export function generateDiagram(algorithmResult: IAlgorithmResult, filePath: str
 		['burstTime', 'burst time'],
 		['startTime', 'start time'],
 		['finishTime', 'finish time'],
+		['responseTime', 'response time'],
 		['turnaroundTime', 'turnaround time'],
 		['waitTime', 'wait time'],
 	];
@@ -22,9 +23,11 @@ export function generateDiagram(algorithmResult: IAlgorithmResult, filePath: str
 	generateTable(jsdom.window, algorithmResult.infos, labels);
 
 	generateList(window, [
+		['Total response time', algorithmResult.totalTurnaroundTime.toString()],
+		['Average response time', algorithmResult.totalWaitTime.toString()],
 		['Total turnaround time', algorithmResult.totalTurnaroundTime.toString()],
-		['Total wait time', algorithmResult.totalWaitTime.toString()],
 		['Average turnaround time', algorithmResult.averageTurnaroundTime.toString()],
+		['Total wait time', algorithmResult.totalWaitTime.toString()],
 		['Average wait time', algorithmResult.averageWaitTime.toString()],
 	]);
 

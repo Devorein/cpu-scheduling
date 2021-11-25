@@ -4,6 +4,7 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 	const processInfos: IProcessInfo[] = [];
 	let totalWaitTime = 0;
 	let totalTurnaroundTime = 0;
+	let totalResponseTime = 0;
 
 	sortedProcesses.forEach(([pid, arrivalTime, burstTime], processIndex) => {
 		if (processIndex === 0) {
@@ -16,6 +17,7 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 				finishTime: arrivalTime + burstTime,
 				turnaroundTime,
 				waitTime: turnaroundTime - burstTime,
+				responseTime: 0,
 			});
 		} else {
 			const previousProcess = processInfos[processIndex - 1];
@@ -23,6 +25,7 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 				previousProcess.finishTime < arrivalTime ? arrivalTime : previousProcess.finishTime;
 			const finishTime = startTime + burstTime;
 			const turnaroundTime = finishTime - arrivalTime;
+			const waitTime = turnaroundTime - burstTime;
 			processInfos.push({
 				pid,
 				arrivalTime,
@@ -30,11 +33,13 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 				startTime,
 				finishTime,
 				turnaroundTime,
-				waitTime: turnaroundTime - burstTime,
+				waitTime,
+				responseTime: startTime - arrivalTime,
 			});
 		}
 		totalWaitTime += processInfos[processInfos.length - 1].waitTime;
 		totalTurnaroundTime += processInfos[processInfos.length - 1].turnaroundTime;
+		totalResponseTime += processInfos[processInfos.length - 1].responseTime;
 	});
 
 	return {
@@ -43,5 +48,7 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 		totalTurnaroundTime,
 		averageWaitTime: totalWaitTime / processInfos.length,
 		averageTurnaroundTime: totalTurnaroundTime / processInfos.length,
+		totalResponseTime,
+		averageResponseTime: totalResponseTime / processInfos.length,
 	};
 }

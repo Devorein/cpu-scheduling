@@ -6,6 +6,7 @@ export interface IProcessInfo {
 	finishTime: number;
 	turnaroundTime: number;
 	waitTime: number;
+	responseTime: number;
 }
 
 export type ProcessInfoInput = [string, number, number];
@@ -16,4 +17,6 @@ export interface IAlgorithmResult {
 	totalTurnaroundTime: number;
 	averageWaitTime: number;
 	averageTurnaroundTime: number;
+	totalResponseTime: number;
+	averageResponseTime: number;
 }
