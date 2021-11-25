@@ -28,5 +28,8 @@ module.exports = {
 		'no-else-return': 'off',
 		'one-var': 'off',
 		'no-lonely-if': 'off',
+		'no-constant-condition': 'off',
+		'no-param-reassign': 'off',
+		'prefer-destructuring': 'off',
 	},
 };

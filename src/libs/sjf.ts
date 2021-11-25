@@ -1,37 +1,12 @@
 import { ProcessInfoInput } from '../types';
-import { calculateProcessInfo, generateDiagram } from '../utils';
-
-export function findFirstProcessToBeExecuted(processInfosInput: Array<ProcessInfoInput>) {
-	let firstProcess: ProcessInfoInput = processInfosInput[0],
-		firstProcessIndex = 0;
-	for (let index = 1; index < processInfosInput.length; index += 1) {
-		// Comparing the arrival time
-		if (processInfosInput[index][1] < firstProcess[1]) {
-			firstProcess = processInfosInput[index];
-			firstProcessIndex = index;
-		} else if (processInfosInput[index][1] === firstProcess[1]) {
-			// Comparing the burst time
-			if (processInfosInput[index][2] < firstProcess[2]) {
-				firstProcess = processInfosInput[index];
-				firstProcessIndex = index;
-			} else if (processInfosInput[index][2] === firstProcess[2]) {
-				// Comparing the process id
-				firstProcess =
-					processInfosInput[index][0] < firstProcess[0] ? processInfosInput[index] : firstProcess;
-				firstProcessIndex = index;
-			}
-		}
-	}
-
-	return [firstProcess, firstProcessIndex] as const;
-}
+import { calculateProcessInfo, findProcessByArrivalTime, generateDiagram } from '../utils';
 
 export function shortestJobFirst(processInfosInput: Array<ProcessInfoInput>) {
 	const copiedProcessInfosInput: Array<ProcessInfoInput> = JSON.parse(
 		JSON.stringify(processInfosInput)
 	);
 
-	const [firstProcess, firstProcessIndex] = findFirstProcessToBeExecuted(processInfosInput);
+	const [firstProcess, firstProcessIndex] = findProcessByArrivalTime(processInfosInput);
 
 	copiedProcessInfosInput.splice(firstProcessIndex, 1);
 
@@ -69,14 +44,6 @@ export function shortestJobFirst(processInfosInput: Array<ProcessInfoInput>) {
 	}
 
 	return calculateProcessInfo(processQueue);
-}
-
-export function shortestJobFirstPreEmptive(processInfosInput: Array<ProcessInfoInput>) {
-	const copiedProcessInfosInput: Array<ProcessInfoInput> = JSON.parse(
-		JSON.stringify(processInfosInput)
-	);
-
-	const [firstProcess, firstProcessIndex] = findFirstProcessToBeExecuted(processInfosInput);
 }
 
 export function generateDiagramForSjf(
