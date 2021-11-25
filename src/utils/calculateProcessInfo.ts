@@ -9,11 +9,11 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 		if (processIndex === 0) {
 			const turnaroundTime: number = burstTime - arrivalTime;
 			processInfos.push({
+				pid,
 				arrivalTime,
 				burstTime,
-				finishTime: arrivalTime + burstTime,
-				pid,
 				startTime: arrivalTime,
+				finishTime: arrivalTime + burstTime,
 				turnaroundTime,
 				waitTime: turnaroundTime - burstTime,
 			});
@@ -24,11 +24,11 @@ export function calculateProcessInfo(sortedProcesses: Array<ProcessInfoInput>): 
 			const finishTime = startTime + burstTime;
 			const turnaroundTime = finishTime - arrivalTime;
 			processInfos.push({
+				pid,
 				arrivalTime,
 				burstTime,
-				finishTime,
-				pid,
 				startTime,
+				finishTime,
 				turnaroundTime,
 				waitTime: turnaroundTime - burstTime,
 			});
